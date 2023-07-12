@@ -180,12 +180,6 @@ open class AppModule : UniDestroyableModule() {
         }
     }
 
-    override fun onActivityResume() {
-        logE(mUniSDKInstance.bundleUrl)
-        logE(mWXSDKInstance.uniPagePath)
-        logE(mUniSDKInstance.bundleUrl?.substringAfter("/apps/")?.substringBefore('/'))
-    }
-
     @CallSuper
     override fun destroy() {
         if (messenger != null) {
