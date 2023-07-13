@@ -19,48 +19,15 @@ import com.yidont.unimp.modules.util.isLocationEnabled
 import com.yidont.unimp.modules.util.isOPPO
 import com.yidont.unimp.modules.util.isViVo
 import com.yidont.unimp.modules.util.isXIAOMI
-import com.yidont.unimp.modules.util.logE
 import com.yidont.unimp.modules.util.requestIgnoreBatteryOptimizations
 import com.yidont.unimp.modules.util.startAppSetting
 import com.yidont.unimp.modules.util.startLocationSetting
 import com.yidont.unimp.modules.util.startSystemSetting
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.common.UniDestroyableModule
+import io.dcloud.feature.uniapp.utils.UniLogUtils
 
 open class AppModule : UniDestroyableModule() {
-
-    /**
-     * 测试服：develop 正式服：release
-     */
-    @UniJSMethod(uiThread = false)
-    open fun appFlavor(): String = "release"
-
-    /**
-     * 升级App
-     */
-    @UniJSMethod(uiThread = true)
-    open fun updateApp() {
-        val context = mUniSDKInstance.context
-        val intent = Intent().apply {
-            setClassName(context, "com.yidont.foot.bath.MainActivity")
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-        context.startActivity(intent)
-    }
-
-    /**
-     * 升级uni小程序
-     */
-    @UniJSMethod(uiThread = true)
-    open fun updateMP(url: String) {
-        val context = mUniSDKInstance.context
-        val intent = Intent().apply {
-            setClassName(context, "com.yidont.foot.bath.MainActivity")
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra("url", url)
-        }
-        context.startActivity(intent)
-    }
 
     /**
      * 跳转App设置界面
@@ -105,7 +72,7 @@ open class AppModule : UniDestroyableModule() {
 
     private var ttsMessage: String? = null // 第一次绑定服务播报的信息
     private var messenger: Messenger? = null
-    private val ttsConnection = object : ServiceConnection {
+    private val ttsConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             messenger = Messenger(service)
             val json = ttsMessage
@@ -114,7 +81,7 @@ open class AppModule : UniDestroyableModule() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
-            logE("ttsConnection断开连接 onServiceDisconnected")
+            UniLogUtils.d("ttsConnection断开连接 onServiceDisconnected")
         }
     }
 
@@ -135,7 +102,7 @@ open class AppModule : UniDestroyableModule() {
         try {
             messenger?.send(message)
         } catch (e: Exception) {
-            logE("ttsSendMessage 服务不在线", e)
+            UniLogUtils.e("ttsSendMessage 服务不在线", e)
             ttsMessage = json
             bindTTSService(mUniSDKInstance.context)
         }

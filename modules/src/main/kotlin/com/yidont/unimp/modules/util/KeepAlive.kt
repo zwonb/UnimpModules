@@ -5,6 +5,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.os.PowerManager
 import com.yidont.unimp.modules.R
+import io.dcloud.feature.uniapp.utils.UniLogUtils
 import kotlinx.coroutines.*
 
 object KeepAlive {
@@ -19,7 +20,7 @@ object KeepAlive {
 
     fun init(appContext: Context) {
         release()
-        logE("KeepAlive init")
+        UniLogUtils.d("KeepAlive init")
 //        initWifiLock(appContext)
         if (isWakeLockWork() /*&& isIgnoringBatteryOptimizations(appContext)*/) {
             initWakeLock(appContext)
@@ -30,7 +31,7 @@ object KeepAlive {
     }
 
     fun release() {
-        logE("KeepAlive release")
+        UniLogUtils.d("KeepAlive release")
         if (scope.isActive) scope.cancel()
 //        releaseWifiLock()
 //        if (isWakeLockWork()) {
@@ -42,7 +43,6 @@ object KeepAlive {
 
     @SuppressLint("WakelockTimeout")
     private fun initWakeLock(appContext: Context) {
-//        releaseWakeLock()
         val pm = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FootBath:Push")
         wakeLock?.apply {
@@ -70,7 +70,6 @@ object KeepAlive {
 
     private fun initPlayer(appContext: Context) {
         scope.launch(Dispatchers.IO) {
-//            releasePlay()
             player = if (player == null) MediaPlayer.create(appContext, R.raw.notice_0) else player
             player?.apply {
                 setVolume(0.01f, 0f)
@@ -86,7 +85,7 @@ object KeepAlive {
             try {
                 if (!isPlaying) start()
             } catch (e: Exception) {
-                logE("startPlay出错", e)
+                UniLogUtils.e("startPlay出错", e)
             }
         }
     }

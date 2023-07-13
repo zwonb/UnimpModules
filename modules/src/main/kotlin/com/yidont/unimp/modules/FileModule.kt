@@ -4,11 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.yidont.unimp.modules.util.logE
 import com.yidont.unimp.modules.util.saveFileToDownloadDir
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback
 import io.dcloud.feature.uniapp.common.UniModule
+import io.dcloud.feature.uniapp.utils.UniLogUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
@@ -35,7 +35,7 @@ class FileModule : UniModule() {
 
     @UniJSMethod(uiThread = true)
     fun downFileToFileApp(filePath: String, callback: UniJSCallback) {
-        logE("filePath=$filePath")
+        UniLogUtils.d("filePath=$filePath")
         val activity = mUniSDKInstance.context as FragmentActivity
         val appId =
             mUniSDKInstance.bundleUrl?.substringAfter("/apps/")?.substringBefore('/')
@@ -48,7 +48,7 @@ class FileModule : UniModule() {
                 saveFileToDownloadDir(activity, file)
                 callback.invoke(file.name)
             } catch (e: Exception) {
-                logE("保存文件失败", e)
+                UniLogUtils.e("保存文件失败", e)
                 callback.invoke(null)
             }
         }

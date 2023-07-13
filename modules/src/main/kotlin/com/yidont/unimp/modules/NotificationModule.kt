@@ -1,53 +1,58 @@
 package com.yidont.unimp.modules
 
-import android.app.NotificationManager
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import com.yidont.unimp.modules.util.NoticeUtil
+import com.yidont.unimp.modules.util.notifyBase
+import com.yidont.unimp.modules.util.startNotificationSetting
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.common.UniModule
-import org.json.JSONObject
 
 
-class NotificationModule : UniModule() {
+open class NotificationModule : UniModule() {
 
-    /**
-     * {"title":"","text":""}
-     */
-    @UniJSMethod(uiThread = true)
-    fun notify(data: JSONObject) {
-        NoticeUtil.notify(mUniSDKInstance.context, data.getString("title"), data.getString("text"))
-    }
+//    private val notificationManager: NotificationManager
+//        get() = mUniSDKInstance.context.getSystemService(NotificationManager::class.java)
 
     @UniJSMethod(uiThread = false)
-    fun areNotificationsEnabled(): Boolean {
+    open fun areNotificationsEnabled(): Boolean {
         val context = mUniSDKInstance.context ?: return false
-        NoticeUtil.createNoticeChannel(context)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return true
-        if (!NoticeUtil.notificationManager(context).areNotificationsEnabled()) return false
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (NoticeUtil.getPushMsgNoticeChannelImportance(context) < NotificationManager.IMPORTANCE_LOW) {
-                return false
-            }
-        }
-        return true
+        return com.yidont.unimp.modules.util.areNotificationsEnabled(context)
     }
 
+    /**
+     * 8.0以上创建通知渠道
+     */
+    @UniJSMethod(uiThread = true)
+    fun createNotificationChannel(channelId: String, name: String, sound: String = "") {
+        val context = mUniSDKInstance.context
+        com.yidont.unimp.modules.util.createNotificationChannel(
+            context, channelId, name, sound
+        )
+    }
+
+    /**
+     * 8.0以上通知渠道id是否开启
+     */
+    @UniJSMethod(uiThread = false)
+    fun areNotificationsChannelEnabled(channelId: String): Boolean {
+        val context = mUniSDKInstance.context ?: return false
+        return com.yidont.unimp.modules.util.areNotificationsChannelEnabled(context, channelId)
+    }
+
+    /**
+     * 跳转到通知设置
+     */
     @UniJSMethod(uiThread = true)
     fun jumpNotificationSetting() {
         val context = mUniSDKInstance.context
-        val intent = Intent()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
-            intent.putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-        } else {
-            intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
-            intent.putExtra("app_package", context.packageName)
-            intent.putExtra("app_uid", context.applicationInfo.uid)
-        }
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        context.startActivity(intent)
+        startNotificationSetting(context)
+    }
+
+    /**
+     * 发送一个通知
+     */
+    @UniJSMethod(uiThread = true)
+    open fun notify(channelId: String, notifyId: Int, title: String?, text: String?) {
+        val context = mUniSDKInstance.context
+        notifyBase(context, channelId, notifyId, title, text)
     }
 
 }

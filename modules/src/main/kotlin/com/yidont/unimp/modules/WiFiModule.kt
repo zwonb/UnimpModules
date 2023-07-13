@@ -17,13 +17,13 @@ import android.os.Build
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
 import com.yidont.unimp.modules.util.isLocationEnabled
-import com.yidont.unimp.modules.util.logE
 import com.yidont.unimp.modules.util.setWifiEnabled
 import com.yidont.unimp.modules.util.startWifiSetting
 import io.dcloud.common.core.permission.PermissionControler
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback
 import io.dcloud.feature.uniapp.common.UniDestroyableModule
+import io.dcloud.feature.uniapp.utils.UniLogUtils
 
 
 class WiFiModule : UniDestroyableModule() {
@@ -95,7 +95,7 @@ class WiFiModule : UniDestroyableModule() {
         try {
             context.registerReceiver(wifiScanReceiver, intentFilter)
         } catch (e: Exception) {
-            logE("注册wifi扫描广播出错", e)
+            UniLogUtils.e("注册wifi扫描广播出错", e)
         }
     }
 
@@ -105,7 +105,7 @@ class WiFiModule : UniDestroyableModule() {
         try {
             context.unregisterReceiver(wifiScanReceiver)
         } catch (e: Exception) {
-            logE("取消wifi扫描广播出错", e)
+            UniLogUtils.e("取消wifi扫描广播出错", e)
         }
     }
 
@@ -113,7 +113,6 @@ class WiFiModule : UniDestroyableModule() {
      * wifiListUpdated false扫描失败,使用旧结果
      */
     private fun getScanResult(wifiListUpdated: Boolean): JSONObject {
-        logE("扫描状态：$wifiListUpdated")
         val result = JSONObject()
         result["wifiListUpdated"] = wifiListUpdated
         result["currentWiFi"] = getCurrentWiFi()
@@ -132,14 +131,14 @@ class WiFiModule : UniDestroyableModule() {
             ssid = wifiManager?.connectionInfo?.ssid ?: ""
             bssid = wifiManager?.connectionInfo?.bssid ?: ""
         } catch (e: Exception) {
-            logE("connectionInfo 权限不足", e)
+            UniLogUtils.e("connectionInfo 权限不足", e)
         }
         if (ssid.startsWith('"')) {
             ssid = ssid.trimStart { it == '"' }.trimEnd { it == '"' }
         }
         put("ssid", ssid)
         put("bssid", bssid)
-        logE("当前wifi：${this}")
+        UniLogUtils.i("当前wifi：${this}")
     }
 
     @Suppress("DEPRECATION")
@@ -152,10 +151,10 @@ class WiFiModule : UniDestroyableModule() {
                     put("bssid", it.BSSID)
                 }
                 add(item)
-                logE("scan wifi:${item}")
+                UniLogUtils.i("scan wifi:${item}")
             }
         } catch (e: Exception) {
-            logE("scanResults 权限不足", e)
+            UniLogUtils.e("scanResults 权限不足", e)
         }
     }
 
@@ -179,7 +178,7 @@ class WiFiModule : UniDestroyableModule() {
                 put("wifiRSSI", rssi)
                 put("bssid", bssid)
             }
-            logE("wifi变化 $map")
+            UniLogUtils.i("wifi变化 $map")
             mUniSDKInstance?.fireGlobalEventCallback("onNetworkChanged", map)
         }
     }
@@ -197,7 +196,7 @@ class WiFiModule : UniDestroyableModule() {
             try {
                 connectivityManager.registerNetworkCallback(request, it)
             } catch (e: Exception) {
-                logE("registerNetworkListener 出错", e)
+                UniLogUtils.e("registerNetworkListener 出错", e)
             }
         }
     }
@@ -210,7 +209,7 @@ class WiFiModule : UniDestroyableModule() {
             try {
                 connectivityManager.unregisterNetworkCallback(it)
             } catch (e: Exception) {
-                logE("unregisterNetworkListener 出错", e)
+                UniLogUtils.e("unregisterNetworkListener 出错", e)
             }
         }
     }
@@ -253,7 +252,7 @@ class WiFiModule : UniDestroyableModule() {
                         // 由于短时间扫描过多，扫描请求可能遭到节流。9.0+前台运行两分钟最多4次，8.0+后台30分钟内最多1次
                         // 设备处于空闲状态，扫描已停用。
                         // WLAN 硬件报告扫描失败。
-                        logE("startScan 扫描失败")
+                        UniLogUtils.e("startScan 扫描失败，使用旧数据")
                     }
                 }
             }

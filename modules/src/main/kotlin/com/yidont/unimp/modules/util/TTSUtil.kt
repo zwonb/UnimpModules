@@ -1,5 +1,6 @@
 package com.yidont.unimp.modules.util
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -16,12 +17,13 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import androidx.core.app.NotificationCompat
 import com.alibaba.fastjson.JSON
+import io.dcloud.feature.uniapp.utils.UniLogUtils
 import java.util.*
 
 
 object TTSUtil : TextToSpeech.OnInitListener {
 
-    private var tts: TextToSpeech? = null /*TextToSpeech(appContext, this)*/
+    private var tts: TextToSpeech? = null
     private val ttsListener = TTSListener()
     private var reinitialize: Pair<Boolean, TTSBean?> = false to null
 
@@ -37,7 +39,7 @@ object TTSUtil : TextToSpeech.OnInitListener {
                 setResetSpeak()
             } else {
                 val context = appContext ?: return
-                NoticeUtil.createNoticeChannel(context)
+                createNotificationChannel(context, "tts","TTS引擎下载")
                 if (isAppInstalled(context, "com.iflytek.speechcloud")) {
                     settingsNotice()
                 } else {
@@ -46,7 +48,7 @@ object TTSUtil : TextToSpeech.OnInitListener {
             }
         } else {
             val context = appContext ?: return
-            NoticeUtil.createNoticeChannel(context)
+            createNotificationChannel(context, "tts","TTS引擎下载")
             downloadApkNotice("系统TTS引擎异常，请更换或下载其他引擎。\n点击下载TTS引擎，安装完成之后需要在手机设置里搜索TTS(文字转语音)更换【系统语音】为首选引擎，设置完成之后重启App即可正常使用")
         }
     }
@@ -97,18 +99,22 @@ object TTSUtil : TextToSpeech.OnInitListener {
             }
             PendingIntent.getActivity(appContext, 3, intent, PendingIntent.FLAG_IMMUTABLE)
         } catch (e: Exception) {
-            logE("downloadApkNotice获取intent出错", e)
+            UniLogUtils.e("downloadApkNotice获取intent出错", e)
             null
         }
+        val context = appContext ?: return
         val style = NotificationCompat.BigTextStyle()
         style.bigText(text)
-        val context = appContext ?: return
-        val msgNotice = NoticeUtil.getPushMsgNotice(context)
-            .setContentText(text)
+
+        val notification = buildNotificationBase(context, "tts")
             .setContentIntent(intent)
+            .setContentTitle("缺少文字转语音引擎")
+            .setContentText(text)
             .setStyle(style)
             .build()
-        NoticeUtil.notificationManager(context).notify(NoticeUtil.ttsId, msgNotice)
+
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.notify(1, notification)
     }
 
     private fun settingsNotice() {
@@ -118,17 +124,21 @@ object TTSUtil : TextToSpeech.OnInitListener {
             }
             PendingIntent.getActivity(appContext, 3, intent, PendingIntent.FLAG_IMMUTABLE)
         } catch (e: Exception) {
-            logE("settingsNotice获取intent出错", e)
+            UniLogUtils.e("settingsNotice获取intent出错", e)
             null
         }
+        val context = appContext ?: return
         val style = NotificationCompat.BigTextStyle()
         style.bigText("当前TTS引擎不支持中文，请在手机设置里搜索TTS(文字转语音)更换【系统语音】为首选引擎，设置完成之后重启App即可正常使用")
-        val context = appContext ?: return
-        val msgNotice = NoticeUtil.getPushMsgNotice(context)
+
+        val notification = buildNotificationBase(context, "tts")
             .setContentIntent(intent)
+            .setContentTitle("切换文字转语音引擎")
             .setStyle(style)
             .build()
-        NoticeUtil.notificationManager(context).notify(NoticeUtil.ttsId, msgNotice)
+
+        val manager = context.getSystemService(NotificationManager::class.java)
+        manager.notify(1, notification)
     }
 
     private fun setVolume(volume: Int?) {
@@ -137,7 +147,7 @@ object TTSUtil : TextToSpeech.OnInitListener {
         try {
             am.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_PLAY_SOUND)
         } catch (e: Exception) {
-            logE("设置音量出错", e)
+            UniLogUtils.e("设置音量出错", e)
         }
     }
 
@@ -149,10 +159,10 @@ object TTSUtil : TextToSpeech.OnInitListener {
         try {
             val maxVolume = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
             val newVolume = (maxVolume.toFloat() * volumePercent).toInt()
-            logE("设的音量：$newVolume")
+            UniLogUtils.d("设的音量：$newVolume")
             am.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, AudioManager.FLAG_PLAY_SOUND)
         } catch (e: Exception) {
-            logE("设置音量出错", e)
+            UniLogUtils.e("设置音量出错", e)
         }
     }
 
@@ -243,7 +253,7 @@ class TTSMessengerService : Service() {
                 )
                 TTSUtil.addSpeak(context, bean)
             } catch (e: Throwable) {
-                logE("tts播报出错", e)
+                UniLogUtils.e("tts播报出错", e)
             }
         }
     }
