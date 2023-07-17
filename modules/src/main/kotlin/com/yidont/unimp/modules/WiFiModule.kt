@@ -16,9 +16,9 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import com.alibaba.fastjson.JSONArray
 import com.alibaba.fastjson.JSONObject
-import com.yidont.unimp.modules.util.isLocationEnabled
-import com.yidont.unimp.modules.util.setWifiEnabled
-import com.yidont.unimp.modules.util.startWifiSetting
+import com.yidont.library.utils.isLocationEnabled
+import com.yidont.library.utils.setWifiEnabled
+import com.yidont.library.utils.startWifiSetting
 import io.dcloud.common.core.permission.PermissionControler
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback

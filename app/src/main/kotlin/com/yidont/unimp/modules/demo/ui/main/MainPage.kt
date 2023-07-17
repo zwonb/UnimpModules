@@ -17,17 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.yidont.unimp.modules.demo.APP_ID
 import com.yidont.unimp.modules.demo.MainActivity
 import com.yidont.unimp.modules.demo.MainViewModel
 import kotlinx.coroutines.launch
-import java.io.File
 
 
 @Composable
@@ -42,10 +39,8 @@ fun MainPage(viewModel: MainViewModel) {
         ) {
             val tipText = viewModel.state.tipText
             if (tipText != null) {
-                val context = LocalContext.current
                 ErrorPage(tipText) {
-                    val file = File(context.externalCacheDir, "$APP_ID.wgt")
-                    viewModel.releaseStartMP(file.path)
+                    viewModel.openMP()
                 }
             } else {
                 LogoImg { viewModel.openMP() }

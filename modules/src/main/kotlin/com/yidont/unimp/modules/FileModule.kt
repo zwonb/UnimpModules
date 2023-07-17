@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.yidont.unimp.modules.util.saveFileToDownloadDir
+import com.yidont.library.utils.saveFileToDownloadDir
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.bridge.UniJSCallback
 import io.dcloud.feature.uniapp.common.UniModule
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 
-class FileModule : UniModule() {
+open class FileModule : UniModule() {
 
     private var success: UniJSCallback? = null
 

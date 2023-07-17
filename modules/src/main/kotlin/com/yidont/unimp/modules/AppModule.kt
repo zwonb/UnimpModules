@@ -9,20 +9,22 @@ import android.os.IBinder
 import android.os.Message
 import android.os.Messenger
 import androidx.annotation.CallSuper
-import com.yidont.unimp.modules.util.KeepAlive
-import com.yidont.unimp.modules.util.TTSMessengerService
-import com.yidont.unimp.modules.util.autoStartSetting
-import com.yidont.unimp.modules.util.batteryOptimization
-import com.yidont.unimp.modules.util.isHonor
-import com.yidont.unimp.modules.util.isHuawei
-import com.yidont.unimp.modules.util.isLocationEnabled
-import com.yidont.unimp.modules.util.isOPPO
-import com.yidont.unimp.modules.util.isViVo
-import com.yidont.unimp.modules.util.isXIAOMI
-import com.yidont.unimp.modules.util.requestIgnoreBatteryOptimizations
-import com.yidont.unimp.modules.util.startAppSetting
-import com.yidont.unimp.modules.util.startLocationSetting
-import com.yidont.unimp.modules.util.startSystemSetting
+import com.alibaba.fastjson.JSON
+import com.yidont.library.utils.KeepAliveUtil
+import com.yidont.library.utils.TTSBean
+import com.yidont.library.utils.TTSMessengerService
+import com.yidont.library.utils.autoStartSetting
+import com.yidont.library.utils.batteryOptimization
+import com.yidont.library.utils.isHonor
+import com.yidont.library.utils.isHuawei
+import com.yidont.library.utils.isLocationEnabled
+import com.yidont.library.utils.isOPPO
+import com.yidont.library.utils.isViVo
+import com.yidont.library.utils.isXIAOMI
+import com.yidont.library.utils.requestIgnoreBatteryOptimizations
+import com.yidont.library.utils.startAppSetting
+import com.yidont.library.utils.startLocationSetting
+import com.yidont.library.utils.startSystemSetting
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.common.UniDestroyableModule
 import io.dcloud.feature.uniapp.utils.UniLogUtils
@@ -70,14 +72,14 @@ open class AppModule : UniDestroyableModule() {
      * tts
      */
 
-    private var ttsMessage: String? = null // 第一次绑定服务播报的信息
+    private var ttsBean: TTSBean? = null // 第一次绑定服务播报的信息
     private var messenger: Messenger? = null
     private val ttsConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             messenger = Messenger(service)
-            val json = ttsMessage
-            ttsMessage = null
-            if (json != null) ttsSendMessage(json)
+            val bean = ttsBean
+            ttsBean = null
+            if (bean != null) ttsSendMessage(bean)
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -94,16 +96,18 @@ open class AppModule : UniDestroyableModule() {
         context?.unbindService(ttsConnection)
     }
 
-    private fun ttsSendMessage(json: String?) {
-        json ?: return
+    private fun ttsSendMessage(bean: TTSBean?) {
+        bean ?: return
         val message = Message.obtain().apply {
-            data.putString(TTSMessengerService.MESSAGE, json)
+            data.putString(TTSMessengerService.TEXT, bean.text)
+            data.putFloat(TTSMessengerService.PERCENT, bean.percent)
+            data.putBoolean(TTSMessengerService.FLUSH, bean.flush)
         }
         try {
             messenger?.send(message)
         } catch (e: Exception) {
             UniLogUtils.e("ttsSendMessage 服务不在线", e)
-            ttsMessage = json
+            ttsBean = bean
             bindTTSService(mUniSDKInstance.context)
         }
     }
@@ -113,22 +117,28 @@ open class AppModule : UniDestroyableModule() {
      */
     @UniJSMethod(uiThread = true)
     fun ttsSpeak(json: String) {
+        val data = JSON.parseObject(json)
+        val bean = TTSBean(
+            data.getString("text"),
+            data.getFloat("percent") ?: -1f,
+            data.getBooleanValue("flush")
+        )
         if (messenger == null) {
-            ttsMessage = json
+            ttsBean = bean
             bindTTSService(mUniSDKInstance.context)
         } else {
-            ttsSendMessage(json)
+            ttsSendMessage(bean)
         }
     }
 
     @UniJSMethod(uiThread = true)
     fun appKeepAlive() {
-        KeepAlive.init(mUniSDKInstance.context.applicationContext)
+        KeepAliveUtil.init(mUniSDKInstance.context.applicationContext)
     }
 
     @UniJSMethod(uiThread = true)
     fun appKeepAliveRelease() {
-        KeepAlive.release()
+        KeepAliveUtil.release()
     }
 
     @UniJSMethod(uiThread = true)

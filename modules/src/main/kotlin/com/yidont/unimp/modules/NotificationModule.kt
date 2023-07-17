@@ -1,7 +1,7 @@
 package com.yidont.unimp.modules
 
-import com.yidont.unimp.modules.util.notifyBase
-import com.yidont.unimp.modules.util.startNotificationSetting
+import com.yidont.library.utils.notifyBase
+import com.yidont.library.utils.startNotificationSetting
 import io.dcloud.feature.uniapp.annotation.UniJSMethod
 import io.dcloud.feature.uniapp.common.UniModule
 
@@ -14,7 +14,7 @@ open class NotificationModule : UniModule() {
     @UniJSMethod(uiThread = false)
     open fun areNotificationsEnabled(): Boolean {
         val context = mUniSDKInstance.context ?: return false
-        return com.yidont.unimp.modules.util.areNotificationsEnabled(context)
+        return com.yidont.library.utils.areNotificationsEnabled(context)
     }
 
     /**
@@ -23,7 +23,7 @@ open class NotificationModule : UniModule() {
     @UniJSMethod(uiThread = true)
     fun createNotificationChannel(channelId: String, name: String, sound: String = "") {
         val context = mUniSDKInstance.context
-        com.yidont.unimp.modules.util.createNotificationChannel(
+        com.yidont.library.utils.createNotificationChannel(
             context, channelId, name, sound
         )
     }
@@ -34,7 +34,7 @@ open class NotificationModule : UniModule() {
     @UniJSMethod(uiThread = false)
     fun areNotificationsChannelEnabled(channelId: String): Boolean {
         val context = mUniSDKInstance.context ?: return false
-        return com.yidont.unimp.modules.util.areNotificationsChannelEnabled(context, channelId)
+        return com.yidont.library.utils.areNotificationsChannelEnabled(context, channelId)
     }
 
     /**
