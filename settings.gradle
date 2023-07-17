@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "UnimpModules"
 include ':app'
-include ':modules'
+include ':unimp-modules'
