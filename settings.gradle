@@ -14,6 +14,6 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
     }
 }
-rootProject.name = "UnimpModules"
+rootProject.name = "unimp-modules"
 include ':app'
 include ':modules'
