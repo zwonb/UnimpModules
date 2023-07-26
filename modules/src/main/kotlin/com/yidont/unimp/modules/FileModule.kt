@@ -1,6 +1,7 @@
 package com.yidont.unimp.modules
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,14 @@ import java.io.File
 
 
 open class FileModule : UniModule() {
+
+    companion object {
+        fun getTempFile(context: Context, tempPath: String, appId: String): File {
+            val externalPath = context.getExternalFilesDir(null)?.parentFile?.path ?: ""
+            val parentFile = File(externalPath, "apps/$appId/")
+            return File(parentFile, tempPath)
+        }
+    }
 
     private var success: UniJSCallback? = null
 
@@ -53,21 +62,6 @@ open class FileModule : UniModule() {
             }
         }
     }
-
-//    @UniJSMethod(uiThread = true)
-//    fun sendFile(filePath: String) {
-//        val uri = File(filePath).fileToUri()
-//        val intent = Intent(Intent.ACTION_SEND).apply {
-//            type = getMimeType(uri)
-//            putExtra(Intent.EXTRA_STREAM, uri)
-//            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-//        }
-//        try {
-//            mUniSDKInstance.context.startActivity(Intent.createChooser(intent, "分享文件"))
-//        } catch (e: Exception) {
-//            logE("分享文件出错", e)
-//        }
-//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
