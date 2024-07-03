@@ -1,0 +1,63 @@
+{
+  "nativePlugins": [
+    {
+      "plugins": [
+        {
+          "type": "module",
+          "name": "AppModule",
+          "class": "com.yidont.unimp.modules.AppModule"
+        },
+        {
+          "type": "module",
+          "name": "WiFiModule",
+          "class": "com.yidont.unimp.modules.WiFiModule"
+        },
+        {
+          "type": "module",
+          "name": "NotificationModule",
+          "class": "com.yidont.unimp.modules.NotificationModule"
+        },
+        {
+          "type": "module",
+          "name": "FileModule",
+          "class": "com.yidont.unimp.modules.FileModule"
+        },
+        {
+          "type": "component",
+          "name": "webViewComponent",
+          "class": "com.yidont.unimp.components.WebViewComponent"
+        },
+        {
+          "type": "module",
+          "name": "PermissionModule",
+          "class": "com.yidont.unimp.modules.PermissionModule"
+        },
+        {
+          "type": "module",
+          "name": "ScreenFlashModule",
+          "class": "com.yidont.unimp.screen.flash.ScreenFlashModule"
+        },
+        {
+          "type": "module",
+          "name": "TTSModule",
+          "class": "com.yidont.unimp.modules.TTSModule"
+        },
+        {
+          "type": "module",
+          "name": "NetworkModule",
+          "class": "com.yidont.unimp.modules.NetworkModule"
+        },
+        {
+          "type": "module",
+          "name": "BleModule",
+          "class": "com.yidont.unimp.ble.BleModule"
+        },
+        {
+          "type": "module",
+          "name": "VoiceCallModule",
+          "class": "com.yidont.unimp.voice.call.VoiceCallModule"
+        }
+      ]
+    }
+  ]
+}
