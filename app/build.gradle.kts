@@ -1,27 +1,24 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
-val keystorePropertiesFile: File = rootProject.file("${rootDir.parent}/key.properties")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+//val keystorePropertiesFile: File = rootProject.file("${rootDir.parent}/key.properties")
+//val keystoreProperties = Properties()
+//keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.yidont.uniapp.debug"
     compileSdk = 34
 
-    signingConfigs {
-        create("config") {
-            keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"] as String
-            keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"] as String
-            storeFile = file(keystoreProperties["RELEASE_STORE_FILE"] as String)
-            storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String
-        }
-    }
+//    signingConfigs {
+//        create("config") {
+//            keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"] as String
+//            keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"] as String
+//            storeFile = file(keystoreProperties["RELEASE_STORE_FILE"] as String)
+//            storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String
+//        }
+//    }
 
     defaultConfig {
         applicationId = "com.yidont.uniapp.debug"
@@ -44,10 +41,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("config")
+//            signingConfig = signingConfigs.getByName("config")
         }
         debug {
-            signingConfig = signingConfigs.getByName("config")
+//            signingConfig = signingConfigs.getByName("config")
 
             applicationVariants.all {
                 outputs.map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
@@ -98,5 +95,7 @@ dependencies {
 //    implementation("io.github.zwonb:unimp-voice-call:latest.release")
 
 //    implementation(libs.zwonb.compose)
+//    implementation(project(":compose"))
+    implementation(project(":barcode-scan"))
     implementation(project(":record-video"))
 }

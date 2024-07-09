@@ -1,10 +1,10 @@
-import com.vanniktech.maven.publish.SonatypeHost
+//import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose)
-    alias(libs.plugins.maven.publish)
+//    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -57,41 +57,41 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 }
 
-mavenPublishing {
-    val version = "2.1"
-//    val version = "2.1-SNAPSHOT"
-    coordinates("io.github.zwonb", "compose", version)
-
-    pom {
-        name.set("compose")
-        description.set("Android library")
-        inceptionYear.set("2023")
-        url.set("https://gitee.com/zwonb/app-modules/")
-        licenses {
-            license {
-                name.set("The Apache License, Version 2.0")
-                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-            }
-        }
-        developers {
-            developer {
-                id.set("zwonb")
-                name.set("zhou yuan bin")
-                url.set("https://gitee.com/zwonb/")
-            }
-        }
-        scm {
-            url.set("https://gitee.com/zwonb/app-modules/")
-            connection.set("scm:git:git://gitee.com/zwonb/app-modules.git")
-            developerConnection.set("scm:git:ssh://git@gitee.com/zwonb/app-modules.git")
-        }
-    }
-
-    if (version.endsWith("-SNAPSHOT")) {
-        publishToMavenCentral(SonatypeHost.S01, false)
-    } else {
-        publishToMavenCentral(SonatypeHost.S01, true)
-        signAllPublications()
-    }
-}
+//mavenPublishing {
+//    val version = "2.1"
+////    val version = "2.1-SNAPSHOT"
+//    coordinates("io.github.zwonb", "compose", version)
+//
+//    pom {
+//        name.set("compose")
+//        description.set("Android library")
+//        inceptionYear.set("2023")
+//        url.set("https://gitee.com/zwonb/app-modules/")
+//        licenses {
+//            license {
+//                name.set("The Apache License, Version 2.0")
+//                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+//                distribution.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+//            }
+//        }
+//        developers {
+//            developer {
+//                id.set("zwonb")
+//                name.set("zhou yuan bin")
+//                url.set("https://gitee.com/zwonb/")
+//            }
+//        }
+//        scm {
+//            url.set("https://gitee.com/zwonb/app-modules/")
+//            connection.set("scm:git:git://gitee.com/zwonb/app-modules.git")
+//            developerConnection.set("scm:git:ssh://git@gitee.com/zwonb/app-modules.git")
+//        }
+//    }
+//
+//    if (version.endsWith("-SNAPSHOT")) {
+//        publishToMavenCentral(SonatypeHost.S01, false)
+//    } else {
+//        publishToMavenCentral(SonatypeHost.S01, true)
+//        signAllPublications()
+//    }
+//}
