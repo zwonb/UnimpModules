@@ -41,7 +41,7 @@
         android:largeHeap="true"
         android:supportsRtl="true">
         <activity
-            android:name="io.dcloud.PandoraEntry"
+            android:name=".Test"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:exported="true"
             android:hardwareAccelerated="true"
